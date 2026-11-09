@@ -1,7 +1,7 @@
 require 'faraday'
 
 
-prompt = "How do I ask for structured output in this API (gemini)?"
+prompt = "How do I ask for structured output in this API (gemini)? But in ruby with faraday. concise answer, please."
 
 conn = Faraday.new(
   url: "https://generativelanguage.googleapis.com",
@@ -15,7 +15,24 @@ conn = Faraday.new(
 response = conn.post("/v1beta/interactions") do |req|
   req.body = {
     model: "gemini-3.5-flash-lite",
-    input: prompt
+    input: prompt,
+    response_format: {
+      type: "text",
+      mime_type: "application/json",
+      schema: {
+        type: "object",
+        properties: {
+          "question": {
+            "type": "string",
+            "description": "The question rephrased using only 3 words",
+          },
+          "answer": {
+            "type": "string",
+            "description": "An answer to the question using only 5 words",
+          },
+        },
+      },
+    },
   }.to_json
 end
 
