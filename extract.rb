@@ -1,7 +1,7 @@
 require 'faraday'
 
 
-prompt = '''Hello there'''
+prompt = "How do I ask for structured output in this API (gemini)?"
 
 conn = Faraday.new(
   url: "https://generativelanguage.googleapis.com",
@@ -12,15 +12,17 @@ conn = Faraday.new(
   }
 )
 
-
 response = conn.post("/v1beta/interactions") do |req|
   req.body = {
-    model: "gemini-3.8-flash",
-    input: "Explain how AI works in a few words"
+    model: "gemini-3.5-flash-lite",
+    input: prompt
   }.to_json
-  puts 'req', req.inspect
 end
 
-puts response.success?
-puts response.body
+body = JSON.parse(response.body)
+pp(body)
+puts
+
+result = body['steps'][1]['content'][0]['text']
+puts result
 
